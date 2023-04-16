@@ -19,46 +19,60 @@ export default class SignupDAO{
     }
 
     static async addUser(data){
-        console.log({data});
-        
-        const cursor = await signup.find({email : data.email}).limit(1).hasNext();
-        
-        if (cursor){
-            return cursor
-        }else{
-            try {
-                return await signup.insertOne(data)
-            } catch (error) {
-                console.error(`Unable to delete data: ${error}`);
-                return {error: error};
-            }
+        try {
+            return await signup.insertOne({"phonenumber":data.values.phonenumber,
+                                           "name":data.values.username,
+                                           "email":data.values.email})
+        } catch (error) {
+            console.error(`Unable to add data: ${error}`);
+            return {error: error};
         }
     }
 
-    static async returnOtp(otp){
-        console.log(otp);
-        // return otp
-    }
 
     static async checkUserExistance(data){
-        const cursor = await signup.find({email : data.email, phoneNo: data.phoneNo}).limit(1).hasNext();
-        const client = twilio('AC4a123edfa2432fc081932ed4f50040a2', 'c78b4a4677577f64df1f997e510b338f');
-        if (cursor){
-            return cursor
-        }else{
+        // const cursor = await signup.find({email : data.email, phoneNo: data.phoneNo}).limit(1).hasNext();
+        const client = twilio(accountSid, authToken);
+        const cursor = await signup.find({ phonenumber: data.phonenumber}).limit(1).hasNext();
+        console.log(cursor);
+        if ((cursor && data.for === "login") || (!cursor && data.for === "signup")){
             let otp = Math.floor(Math.random() * 900000) + 100000;
             client.messages
             .create({
                 body: `${otp} is the OTP to login to your Tiffin Service account.`, 
-                to: `+91${data.phoneNo}`, // Text this number
+                to: `+91${data.phonenumber}`, // Text this number
                 from: '+12708187942', // From a valid Twilio number
             })
-            .then((message) => {if (message.sid){
-                return otp
-            }},(err) => {console.log(err)})
+            .then(() => {return otp},(e) => {console.error("THat's not work",e)})
             .catch(error => console.log(error))
-    
             return otp
+        }else if (!cursor && data.for === "login"){
+            return false
+        }else{
+            return true
         }
+        // if (cursor){
+        //     return cursor
+        // }else{
+            // let otp = Math.floor(Math.random() * 900000) + 100000;
+            // client.messages
+            // .create({
+            //     body: `${otp} is the OTP to login to your Tiffin Service account.`, 
+            //     to: `+91${data.phonenumber}`, // Text this number
+            //     from: '+12708187942', // From a valid Twilio number
+            // })
+            // .then((message) => {if (message.sid){
+            //     return otp
+            // }},(err) => {console.log(err)})
+            // .catch(error => console.log(error))
+    
+        //     return otp
+        // }
     }
+
+    static async verifyUserLogin(data){
+
+    }
+
+    static async 
 }
