@@ -58,12 +58,31 @@ export default class MenuDAO {
         }
     }
 
-    static async deleteMenu(data){
+    static async deleteMenu(menuId){
+        // console.log({data});
         try {
-            return await menu.deleteOne({_id : new ObjectId()})
+            return await menu.deleteOne({_id : new ObjectId(menuId)})
         } catch (error) {
             console.error(`Unable to delete data: ${error}`);
             return {error: error};
         }
+    }
+
+    static async getMenuById(supplierId){
+        let cursor;
+        try {
+            cursor = await menu.find({supplier_id : new ObjectId(supplierId)});
+        } catch (error) {
+            console.error(`Unable to get data: ${error}`);
+            return {error: error};
+        }
+
+        try {
+            const menuData = cursor.toArray();
+            return menuData;
+        } catch (error) {
+            console.error(`Unable to convert to array ${error}`);
+        }
+        return {menuData:[]};   
     }
 }

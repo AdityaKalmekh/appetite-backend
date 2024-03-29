@@ -2,6 +2,8 @@ import Razorpay from "razorpay";
 import crypto from "crypto"
 let amount;
 import PaymentDao from "../dao/paymentDAO.js";
+import OrderDAO from "../dao/orderDAO.js";
+import { log } from "console";
 
 export default class PaymentController {
     static async apiPayment(req,res,next) {
@@ -27,7 +29,9 @@ export default class PaymentController {
 
     static async apiPaymentVerification(req,res,next) {
         try{
-            const {razorpay_payment_id,razorpay_order_id,razorpay_signature} = req.body
+            const {razorpay_payment_id,razorpay_order_id,razorpay_signature,
+                    supplierId,quantity,userId,total} = req.body;
+
 
             let body = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -39,10 +43,12 @@ export default class PaymentController {
             
             if (isAuthentic){
                 const response = await PaymentDao.addPayment({amount,razorpay_order_id,razorpay_payment_id})
-                if (response.acknowledged){
-                    res.redirect(
-                        `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
-                    )
+                const orderAck = await OrderDAO.addOrder({supplierId,quantity,userId,total})
+                if (response.acknowledged && orderAck.acknowledged){
+                    // res.redirect(
+                    //     `http://localhost:3000/paymentSuccess?reference=${razorpay_payment_id}`
+                    // )
+                    res.json({success : true})
                 }
                 else{
                     res.status(400).json({
@@ -54,6 +60,7 @@ export default class PaymentController {
                     success : false
                 })
             }
+            console.log(req.body);
         } catch (error) {
            console.log(error); 
         }

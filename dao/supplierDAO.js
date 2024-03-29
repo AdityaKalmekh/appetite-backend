@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 let supplier;
 export default class SupplierDAO {
     static async injectDB(conn){
@@ -15,7 +17,7 @@ export default class SupplierDAO {
 
     static async addDetails(data){
         try {
-            return await supplier.insertOne(data)
+            return await supplier.insertOne({...data,supplier_id:new ObjectId(data.supplier_id) })
         } catch (error) {
             console.error(`Unable to add data: ${error}`);
             return {error: error};
@@ -33,10 +35,46 @@ export default class SupplierDAO {
 
         try{
             const supplier = await cursor.toArray();
-            return supplier
+            return supplier;
         }catch(e){
             console.error(`Unable to convert to array ${e}`);
         }
         return {data:[]};
+    }
+
+    static async getById(supplierId){
+        let cursor;
+        try {
+            cursor = await supplier.find({supplier_id: new ObjectId(supplierId)})
+            try {
+                const suppliertData = Object.assign({},await cursor.toArray());
+                return suppliertData[0];
+                // return suppliertData;
+            } catch (error) {
+                console.error(`Unable to convert to array ${error}`);
+            }
+        } catch (error) {
+            console.error(`Unable to get supplier data,${error}`);
+            return { supplierData:[]};
+        }
+    }
+
+    static async updateDetails(data){
+
+       const id = data._id;
+       delete data._id;
+       data.supplier_id =  new ObjectId(data.supplier_id);
+    //    delete data.supplier_id;
+        try {
+            return await supplier.updateOne(
+                {_id : new ObjectId(id)},
+                {
+                    $set : data
+                }
+            )
+        } catch (error) {
+            console.error(`Unable to edit data: ${error}`);
+            return {error: error};
+        }
     }
 }

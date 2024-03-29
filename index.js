@@ -5,6 +5,8 @@ import SignupDAO from "./dao/signupDAO.js"
 import SupplierDAO from "./dao/supplierDAO.js"
 import PaymentDao from "./dao/paymentDAO.js"
 import MenuDAO from "./dao/menuDAO.js"
+import LocationDAO from "./dao/locationDAO.js"
+import OrderDAO from "./dao/orderDAO.js"
 
 dotenv.config()
 const MongoClient = mongodb.MongoClient
@@ -21,6 +23,8 @@ MongoClient.connect(
         process.exit(1)
     })
     .then(async client => {
+        OrderDAO.injectDB(client);
+        LocationDAO.injectDB(client);
         SignupDAO.injectDB(client);
         SupplierDAO.injectDB(client);
         PaymentDao.injectDB(client);
