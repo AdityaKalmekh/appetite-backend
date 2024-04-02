@@ -16,6 +16,7 @@ export default class OrderDAO {
 
     static async addOrder(data){
         try {
+            console.log({data});
             return await order.insertOne(data); 
         } catch (error) {
             console.error(`Unable to add order data: ${error}`);

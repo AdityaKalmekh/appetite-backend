@@ -30,7 +30,7 @@ export default class PaymentController {
     static async apiPaymentVerification(req,res,next) {
         try{
             const {razorpay_payment_id,razorpay_order_id,razorpay_signature,
-                    supplierId,quantity,userId,total} = req.body;
+                    supplierId,quantity,userId,total,menuList} = req.body;
 
 
             let body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -43,7 +43,7 @@ export default class PaymentController {
             
             if (isAuthentic){
                 const response = await PaymentDao.addPayment({amount,razorpay_order_id,razorpay_payment_id})
-                const orderAck = await OrderDAO.addOrder({supplierId,quantity,userId,total})
+                const orderAck = await OrderDAO.addOrder({supplierId,quantity,userId,total,menuList})
                 if (response.acknowledged && orderAck.acknowledged){
                     // res.redirect(
                     //     `http://localhost:3000/paymentSuccess?reference=${razorpay_payment_id}`
