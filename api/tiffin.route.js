@@ -5,6 +5,7 @@ import PaymentController from "../controllers/payment.controller.js";
 import MenuController from "../controllers/menu.controller.js";
 import LocationController from "../controllers/location.controller.js";
 import OrderController from "../controllers/order.controller.js";
+import ReviewController from "../controllers/review.controller.js";
 
 const router = express.Router();
 router.route("/addUser").post(SignupController.apiAddUser)
@@ -30,5 +31,6 @@ router.route("/getByCurrentLocation/:log/:lat").get(LocationController.apiGetSup
 router.route("/updateLocation").put(LocationController.apiUpdateLocation);
 
 router.route("/addOrder").post(OrderController.apiAddOrder);
+router.route("/addReview").post(ReviewController.apiAddReview);
 
 export default router 

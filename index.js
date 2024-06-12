@@ -7,6 +7,7 @@ import PaymentDao from "./dao/paymentDAO.js"
 import MenuDAO from "./dao/menuDAO.js"
 import LocationDAO from "./dao/locationDAO.js"
 import OrderDAO from "./dao/orderDAO.js"
+import ReviewDAO from "./dao/ReviewDAO.js"
 
 dotenv.config()
 const MongoClient = mongodb.MongoClient
@@ -29,6 +30,7 @@ MongoClient.connect(
         SupplierDAO.injectDB(client);
         PaymentDao.injectDB(client);
         MenuDAO.injectDB(client);
+        ReviewDAO.injectDB(client);
         app.listen(port, ()=> {
             console.log(`listening on port ${port}`);
         })
