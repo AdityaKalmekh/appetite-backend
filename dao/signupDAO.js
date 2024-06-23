@@ -1,6 +1,4 @@
 let signup;
-const accountSid = 'AC4a123edfa2432fc081932ed4f50040a2'; // Your Account SID from www.twilio.com/console
-const authToken = 'c78b4a4677577f64df1f997e510b338f'; // Your Auth Token from www.twilio.com/console
 import twilio from "twilio"
 
 export default class SignupDAO{
@@ -35,7 +33,7 @@ export default class SignupDAO{
     static async checkUserExistance(data){
         console.log(data);
         // const cursor = await signup.find({email : data.email, phoneNo: data.phoneNo}).limit(1).hasNext();
-        const client = twilio(accountSid, authToken);
+        const client = twilio(process.env.TWILIO_API_KEY, process.env.TWILIO_API_SECRET);
         // const cursor = await signup.find({ phonenumber: data.phonenumber}).limit(1).hasNext();
         const cursor = await signup.find({ phonenumber: data.phonenumber}).project({_id : 1,role:1}).limit(1).toArray();
         // console.log(cursor[0]._id);
